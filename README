@@ -1,0 +1,15 @@
+----------------------------------------------------------------------------------
+A very very simple PHP framework to use the Scoop.it API.
+	Links:
+		- Scoop.it Developers Home : http://www.scoop.it/dev
+		- Scoop.it API Talk : http://groups.google.com/group/scoopit-api-talk
+----------------------------------------------------------------------------------
+
+
+INSTRUCTIONS
+
+Please, follow the instructions bellow:
+
+ - Install php5-curl
+ - Copy/paste config.php.sample into config.php with your values.  
+ - Enjoy, and make your comments!

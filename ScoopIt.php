@@ -233,12 +233,12 @@ class ScoopIt {
 		// or the access token
 		$secret = $this->tokenStore->getSecret();
 		 
-		if($accessToken == null){
+		if($accessToken == null) {
 			// we store the previously requested request token in the session...
-			$requestToken=$this->tokenStore->getRequestToken();
+			$requestToken = $this->tokenStore->getRequestToken();
 			// The request token is only present in one case : the callback has been
 			// called by scoop. So try to authenticate it and grab an access token !
-			if($requestToken!=null){
+			if($requestToken != null) {
 				// try to grab the access token
 				$token = new OAuthConsumer($requestToken,$secret);
 				$parsed = parse_url($this->gjAccessTokenUrl);

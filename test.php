@@ -6,12 +6,9 @@
 	
 		session_start();
 		
-		include("ScoopIt.php");
-	
-		$localUrl = "http://localhost/dev/goojet/dev/scoop-client/php/test.php";
-		$consumerKey = "YOUR_KEY_HERE";
-		$consumerSecret = "YOUR_SECRET_HERE";
-	
+		include_once("ScoopIt.php");
+		include_once("config.php");
+		
 		$scoop = new ScoopIt(new SessionTokenStore(), $localUrl, $consumerKey, $consumerSecret);
 		
 		$scoop->logout();
