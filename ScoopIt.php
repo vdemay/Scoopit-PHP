@@ -323,11 +323,11 @@ class ScoopIt {
 		return $accessToken != null;
 	}
 	
-	public function profile($id) {
+	public function profile($id, $getCuratedTopics = "true", $getFollowedTopics = "false") {
 		if (is_null($id) && $this->isLoggedIn()) {
-			return $this->get($this->scitServer."/api/1/profile");
+			return $this->get($this->scitServer."/api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics);
 		} else if (!is_null($id)) {
-			return $this->get($this->scitServer."/api/1/profile?id=".$id);
+			return $this->get($this->scitServer."/api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics);
 		} else {
 			throw new Exception("Profile without is not permitted in anonymous mode");
 		}
