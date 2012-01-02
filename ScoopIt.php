@@ -325,14 +325,18 @@ class ScoopIt {
 		return $accessToken != null;
 	}
 	
-	public function profile($id, $getCuratedTopics = "true", $getFollowedTopics = "false") {
+	public function profile($id, $getCuratedTopics = "true", $getFollowedTopics = "false", $curated = 0, $curable=0) {
 		if (is_null($id) && $this->isLoggedIn()) {
-			return $this->get($this->scitServer."/api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics);
+			return $this->get($this->scitServer."api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".curable."&curated=".$curated);
 		} else if (!is_null($id)) {
-			return $this->get($this->scitServer."/api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics);
+			return $this->get($this->scitServer."api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".curable."&curated=".$curated);
 		} else {
 			throw new Exception("Profile without is not permitted in anonymous mode");
 		}
+	}
+	
+	public function topic($id, $curated=30, $curable=0, $page=0) {
+		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page);
 	}
 }
 
