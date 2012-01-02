@@ -167,10 +167,10 @@ class ScoopHttpNot200Exception extends Exception {
 
 class ScoopIt {
 	
-	private $gjServer="http://www.scoop.it/";
-	private $gjRequestTokenUrl;
-	private $gjAccessTokenUrl;
-	private $gjAuthorizeUrl ;
+	private $scitServer="http://www.scoop.it/";
+	private $scitRequestTokenUrl;
+	private $scitAccessTokenUrl;
+	private $scitAuthorizeUrl ;
 	private $signatureMethod ;
 	
 	private $myUrl;
@@ -193,9 +193,9 @@ class ScoopIt {
 	// This method construct the Scoop object and authenticate the current user
 	// This can do external redirection so, be sure to fill myUrl apprioriately
 	public function __construct($tokenStore, $myUrl, $consumerKey, $consumerSecret, $httpBackend = null){
-		$this->gjRequestTokenUrl=$this->gjServer."oauth/request";
-		$this->gjAccessTokenUrl=$this->gjServer."oauth/access";
-		$this->gjAuthorizeUrl=$this->gjServer."oauth/authorize";
+		$this->scitRequestTokenUrl=$this->scitServer."oauth/request";
+		$this->scitAccessTokenUrl=$this->scitServer."oauth/access";
+		$this->scitAuthorizeUrl=$this->scitServer."oauth/authorize";
 		$this->signatureMethod = new OAuthSignatureMethod_HMAC_SHA1();
 		$this->tokenStore = $tokenStore;
 		$this->myUrl = $myUrl;
@@ -241,13 +241,13 @@ class ScoopIt {
 			if($requestToken != null) {
 				// try to grab the access token
 				$token = new OAuthConsumer($requestToken,$secret);
-				$parsed = parse_url($this->gjAccessTokenUrl);
+				$parsed = parse_url($this->scitAccessTokenUrl);
 				$params = array();
 				// add verifier
 				parse_str($parsed['query'], $params);
 				$params['oauth_verifier'] = $_GET['oauth_verifier'];
 	
-				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, $token, "GET", $this->gjAccessTokenUrl, $params);
+				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, $token, "GET", $this->scitAccessTokenUrl, $params);
 				$acc_req->sign_request($this->signatureMethod, $this->consumer, $token);
 				//                die($acc_req->to_url());
 				// Execute the HTTP request & parse result as a tokens TODO FACTORIZE
@@ -270,11 +270,11 @@ class ScoopIt {
 				 
 				// no access nor request token, requets a request token and
 				// authorize this application to access to gj data.
-				$parsed = parse_url($this->gjRequestTokenUrl);
+				$parsed = parse_url($this->scitRequestTokenUrl);
 				$params = array();
 				parse_str($parsed['query'], $params);
 				 
-				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, NULL, "GET", $this->gjRequestTokenUrl, $params);
+				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, NULL, "GET", $this->scitRequestTokenUrl, $params);
 				$acc_req->sign_request($this->signatureMethod, $this->consumer, NULL);
 	
 				// Execute the HTTP request & parse result as a tokens TODO FACTORIZE
@@ -294,7 +294,7 @@ class ScoopIt {
 				// the user will then be asked to log in (in scoop) if needed
 				// and it will have to accept that our application will
 				// access to it's personal data.
-				Header("Location: ".$this->gjAuthorizeUrl."?oauth_token=$requestToken&oauth_callback=".urlencode($this->myUrl));
+				Header("Location: ".$this->scitAuthorizeUrl."?oauth_token=$requestToken&oauth_callback=".urlencode($this->myUrl));
 				exit;
 			}
 		}
@@ -311,11 +311,11 @@ class ScoopIt {
 	}
 	
 	public function resolve($type, $shortName) {
-		return $this->get($this->gjServer."api/1/resolver?type=".$type."&shortName=".$shortName);
+		return $this->get($this->scitServer."api/1/resolver?type=".$type."&shortName=".$shortName);
 	}
 	
 	public function test() {
-		return $this->get($this->gjServer."api/1/test");
+		return $this->get($this->scitServer."api/1/test");
 	}
 	
 	public function isLoggedIn() {
@@ -325,9 +325,9 @@ class ScoopIt {
 	
 	public function profile($id) {
 		if (is_null($id) && $this->isLoggedIn()) {
-			return $this->get($this->gjServer."/api/1/profile");
+			return $this->get($this->scitServer."/api/1/profile");
 		} else if (!is_null($id)) {
-			return $this->get($this->gjServer."/api/1/profile?id=".$id);
+			return $this->get($this->scitServer."/api/1/profile?id=".$id);
 		} else {
 			throw new Exception("Profile without is not permitted in anonymous mode");
 		}
