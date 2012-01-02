@@ -272,7 +272,9 @@ class ScoopIt {
 				// authorize this application to access to gj data.
 				$parsed = parse_url($this->gjRequestTokenUrl);
 				$params = array();
-				parse_str($parsed['query'], $params);
+				if (isset($parsed['query'])) {
+					parse_str($parsed['query'], $params);
+				}
 				 
 				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, NULL, "GET", $this->gjRequestTokenUrl, $params);
 				$acc_req->sign_request($this->signatureMethod, $this->consumer, NULL);
