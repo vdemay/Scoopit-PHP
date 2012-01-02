@@ -4,8 +4,10 @@ include("TokenStore.php");
 
 // Store authentication tokens in the session
 class SessionTokenStore implements TokenStore{
-	public function __construct(){
-		session_start();
+	public function __construct() {
+		if (session_id() == "") {
+			session_start();
+		}
 	}
 	
 	// store
@@ -24,30 +26,30 @@ class SessionTokenStore implements TokenStore{
 	
 	// get
 	public function getRequestToken(){
-		return $_SESSION['scoop.requestToken'];
+		return isset($_SESSION['scoop.requestToken']) ? $_SESSION['scoop.requestToken'] : null;
 	}
 	public function getAccessToken(){
-		return $_SESSION['scoop.accessToken'];
+		return isset($_SESSION['scoop.accessToken']) ? $_SESSION['scoop.accessToken'] : null;
 	}
 	public function getVerifier(){
-		return $_SESSION['scoop.verifier'];
+		return isset($_SESSION['scoop.verifier']) ? $_SESSION['scoop.verifier'] : null;
 	}
 	public function getSecret(){
-		return $_SESSION['scoop.secret'];
+		return isset($_SESSION['scoop.secret']) ? $_SESSION['scoop.secret'] : null;
 	}
 	
 	// flush
 	public function flushRequestToken(){
-		session_unregister('scoop.requestToken');
+		unset($_SESSION['scoop.requestToken']);
 	}
 	public function flushAccessToken(){
-		session_unregister('scoop.accessToken');
+		unset($_SESSION['scoop.accessToken']);
 	}
 	public function flushVerifier(){
-		session_unregister('scoop.verifier');
+		unset($_SESSION['scoop.verifier']);
 	}
 	public function flushSecret(){
-		session_unregister('scoop.secret');
+		unset($_SESSION['scoop.secret']);
 	}
 }
 
