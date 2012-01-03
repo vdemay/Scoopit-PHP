@@ -1,5 +1,5 @@
 <?php 
-	$localUrl = "YOUR LOCAL URL HERE";
+	$localUrl = "YOUR ABSOLUTE LOCAL URL HERE";
 	$consumerKey = "YOUR APPLICATION KEY HERE";
 	$consumerSecret = "YOUR APPLICATION SECRET HERE";
 ?>

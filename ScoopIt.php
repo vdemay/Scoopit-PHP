@@ -244,7 +244,9 @@ class ScoopIt {
 				$parsed = parse_url($this->scitAccessTokenUrl);
 				$params = array();
 				// add verifier
-				parse_str($parsed['query'], $params);
+				if (isset($parsed['query'])) {
+					parse_str($parsed['query'], $params);
+				}
 				$params['oauth_verifier'] = $_GET['oauth_verifier'];
 	
 				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, $token, "GET", $this->scitAccessTokenUrl, $params);
@@ -327,16 +329,16 @@ class ScoopIt {
 	
 	public function profile($id, $getCuratedTopics = "true", $getFollowedTopics = "false", $curated = 0, $curable=0) {
 		if (is_null($id) && $this->isLoggedIn()) {
-			return $this->get($this->scitServer."api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".curable."&curated=".$curated);
+			return $this->get($this->scitServer."api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".$curable."&curated=".$curated);
 		} else if (!is_null($id)) {
-			return $this->get($this->scitServer."api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".curable."&curated=".$curated);
+			return $this->get($this->scitServer."api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".$curable."&curated=".$curated);
 		} else {
 			throw new Exception("Profile without is not permitted in anonymous mode");
 		}
 	}
 	
 	public function topic($id, $curated=30, $curable=0, $page=0) {
-		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page);
+		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page)->topic;
 	}
 }
 
