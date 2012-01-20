@@ -174,7 +174,7 @@ class ScoopIt {
 	private $signatureMethod ;
 	
 	private $myUrl;
-	private $tokenStore;
+	public  $tokenStore;
 	private $consumer;
 	
 	private $executor;
@@ -211,7 +211,11 @@ class ScoopIt {
 		$accessToken=$this->tokenStore->getAccessToken();
 		if($accessToken==null){
 			$this->executor = new ScoopExecutor($this->consumer,null,$this->httpBackend);
-		}
+		} else if ($this->isLoggedIn()) {
+			$secret = $this->tokenStore->getSecret();
+			$token = new OauthConsumer($accessToken,$secret);
+			$this->executor = new ScoopExecutor($this->consumer, $token, $this->httpBackend);
+		} 
 	}
 	
 	private function get($url){
@@ -339,6 +343,15 @@ class ScoopIt {
 	
 	public function topic($id, $curated=30, $curable=0, $page=0) {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page)->topic;
+	}
+	
+	public function compilation($sort="rss", $since=0, $count=30) {
+		return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+	}
+	
+	public function share($post_id, $sharer) {
+		$postData = "action=share&id=".$post_id."&shareOn={\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}";
+		return $this->post($this->scitServer."api/1/post", $postData);
 	}
 }
 
