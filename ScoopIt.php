@@ -350,7 +350,7 @@ class ScoopIt {
 	}
 	
 	public function share($post_id, $sharer) {
-		$postData = "action=share&id=".$post_id."&shareOn={\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}";
+		$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";
 		return $this->post($this->scitServer."api/1/post", $postData);
 	}
 }
