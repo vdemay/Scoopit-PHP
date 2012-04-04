@@ -346,8 +346,8 @@ class ScoopIt {
 		return $thePost;
 	}
 	
-	public function topic($id, $curated=30, $curable=0, $page=0) {
-		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page)->topic;
+	public function topic($id, $curated=30, $curable=0, $page=0, $since = 0) {
+		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 	
 	public function compilation($sort="rss", $since=0, $count=30) {
