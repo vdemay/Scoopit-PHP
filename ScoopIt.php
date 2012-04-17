@@ -354,7 +354,7 @@ class ScoopIt {
 		if($this->isLoggedIn()))
 			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
 		else
-			throw new Exception("Profile without is not permitted in anonymous mode");
+			throw new Exception("You need to be connected to get your compilation of followed topics");
 	}
 	
 	public function rescoop($post_id, $topic_id) {
@@ -365,6 +365,13 @@ class ScoopIt {
 	public function share($post_id, $sharer) {
 		$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";
 		return $this->post($this->scitServer."api/1/post", $postData);
+	}
+	
+	public function notifications($since) {
+		if($this->isLoggedIn()))
+			return $this->get($this->scitServer."api/1/notifications?since=".$since)->notifications;
+		else
+			throw new Exception("You have to be connected to get your notifications");
 	}
 }
 
