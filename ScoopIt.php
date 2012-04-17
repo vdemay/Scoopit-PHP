@@ -216,12 +216,20 @@ class ScoopIt {
 		return $thePost;
 	}
 	
-	public function topic($id, $curated=30, $curable=0, $page=0) {
-		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page)->topic;
+	public function topic($id, $curated=30, $curable=0, $page=0, $since = 0) {
+		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 	
 	public function compilation($sort="rss", $since=0, $count=30) {
-		return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+		if($this->isLoggedIn()))
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+		else
+			throw new Exception("You need to be connected to get your compilation of followed topics");
+	}
+	
+	public function rescoop($post_id, $topic_id) {
+		$postData = "action=rescoop&id=".$post_id."&destTopicId=".$topic_id;
+		return $this->post($this->scitServer."api/1/post", $postData);
 	}
 	
 	public function share($post_id, $sharer) {
@@ -235,6 +243,13 @@ class ScoopIt {
 	 */
 	public function getCustomRequest($url) {
 		return $this->get($this->scitServer."api/1/".$url);
+	}
+
+	public function notifications($since) {
+		if($this->isLoggedIn()))
+			return $this->get($this->scitServer."api/1/notifications?since=".$since)->notifications;
+		else
+			throw new Exception("You have to be connected to get your notifications");
 	}
 }
 
