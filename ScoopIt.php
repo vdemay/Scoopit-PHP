@@ -351,7 +351,15 @@ class ScoopIt {
 	}
 	
 	public function compilation($sort="rss", $since=0, $count=30) {
-		return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+		if($this->isLoggedIn()))
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+		else
+			throw new Exception("Profile without is not permitted in anonymous mode");
+	}
+	
+	public function rescoop($post_id, $topic_id) {
+		$postData = "action=rescoop&id=".$post_id."&destTopicId=".$topic_id;
+		return $this->post($this->scitServer."api/1/post", $postData);
 	}
 	
 	public function share($post_id, $sharer) {
