@@ -216,7 +216,7 @@ class ScoopIt {
 		return $thePost;
 	}
 	
-	public function topic($id, $curated=30, $curable=0, $page=0, $since = 0) {
+	public function topic($id, $curated=30, $curable=0, $page=0, $since = -1) {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 	
