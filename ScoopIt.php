@@ -36,7 +36,6 @@ class ScoopHttpNot200Exception extends Exception {
 #################################################################################
 
 class ScoopIt {
-	
 	private $scitServer="http://www.scoop.it/";
 	private $scitRequestTokenUrl;
 	private $scitAccessTokenUrl;
@@ -59,10 +58,14 @@ class ScoopIt {
 	//                by default it will be an instance of ScoopCurlHttpBackend, and if you do
 	//                not have cUrl, you can use pecl_http, just provide an instance of
 	//                ScoopPeclHttpBackend...
-	//
+	// $scoopitServerUrl : the scoopit server url. By default use the field $scitServer of this class
 	// This method construct the Scoop object and authenticate the current user
 	// This can do external redirection so, be sure to fill myUrl apprioriately
-	public function __construct($tokenStore, $myUrl, $consumerKey, $consumerSecret, $httpBackend = null){
+	public function __construct($tokenStore, $myUrl, $consumerKey, $consumerSecret, $httpBackend = null, $scoopitServerUrl = null) {
+		if ($scoopitServerUrl != null) {
+			$this->scitServer = $scoopitServerUrl;
+		}
+		
 		$this->scitRequestTokenUrl=$this->scitServer."oauth/request";
 		$this->scitAccessTokenUrl=$this->scitServer."oauth/access";
 		$this->scitAuthorizeUrl=$this->scitServer."oauth/authorize";
@@ -192,6 +195,15 @@ class ScoopIt {
 		return $this->get($this->scitServer."api/1/resolver?type=".$type."&shortName=".$shortName);
 	}
 	
+	public function resolveTopicFromItsShortName($short_name) {
+		$response = $this->resolve("Topic", $short_name);
+		if ($response->id != null) {
+			return $this->topic($response->id);
+		}
+		// Could not find any topic with this short_name
+		return null;
+	}
+	
 	public function test() {
 		return $this->get($this->scitServer."api/1/test");
 	}
@@ -243,6 +255,16 @@ class ScoopIt {
 			return $this->get($this->scitServer."api/1/notifications?since=".$since)->notifications;
 		} else {
 			throw new Exception("You have to be connected to get your notifications");
+		}
+	}
+	
+	
+	public function createAPost($title, $url, $content, $imageUrl, $topicId) {
+		$data = "action=create&title=".$title."&url=".$url."&content=".$content."&imageUrl=".$imageUrl."&topicId=".$topicId;
+		if($this->isLoggedIn()) {
+			return $this->post($this->scitServer."api/1/post", $data);
+		} else {
+			throw new Exception("You have to be connected to create a post");
 		}
 	}
 	
