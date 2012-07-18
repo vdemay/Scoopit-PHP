@@ -260,7 +260,7 @@ class ScoopIt {
 	
 	
 	public function createAPost($title, $url, $content, $imageUrl, $topicId) {
-		$data = "action=create&title=".$title."&url=".$url."&content=".$content."&imageUrl=".$imageUrl."&topicId=".$topicId;
+		$data = "action=create&title=".urlencode($title)."&url=".urlencode($url)."&content=".urlencode($content)."&imageUrl=".urlencode($imageUrl)."&topicId=".$topicId;
 		if($this->isLoggedIn()) {
 			return $this->post($this->scitServer."api/1/post", $data);
 		} else {
