@@ -258,13 +258,22 @@ class ScoopIt {
 		}
 	}
 	
-	
 	public function createAPost($title, $url, $content, $imageUrl, $topicId) {
 		$data = "action=create&title=".urlencode($title)."&url=".urlencode($url)."&content=".urlencode($content)."&imageUrl=".urlencode($imageUrl)."&topicId=".$topicId;
 		if($this->isLoggedIn()) {
 			return $this->post($this->scitServer."api/1/post", $data);
 		} else {
 			throw new Exception("You have to be connected to create a post");
+		}
+	}
+	
+	public function thankAPost($postLid) {
+		$data = "action=thank&id=".urlencode($postLid);
+		error_log($data);
+		if($this->isLoggedIn()) {
+			return $this->post($this->scitServer."api/1/post", $data);
+		} else {
+			throw new Exception("You have to be connected to thank a post");
 		}
 	}
 	
