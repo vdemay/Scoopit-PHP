@@ -232,9 +232,9 @@ class ScoopIt {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 	
-	public function compilation($sort="rss", $since=0, $count=30) {
+	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0) {
 		if($this->isLoggedIn()) {
-			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments)->posts;
 		} else {
 			throw new Exception("You need to be connected to get your compilation of followed topics");
 		}
