@@ -232,9 +232,9 @@ class ScoopIt {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 	
-	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0) {
+	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0, $page=0) {
 		if($this->isLoggedIn()) {
-			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments)->posts;
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments."&page=".$page)->posts;
 		} else {
 			throw new Exception("You need to be connected to get your compilation of followed topics");
 		}
@@ -269,11 +269,19 @@ class ScoopIt {
 	
 	public function thankAPost($postLid) {
 		$data = "action=thank&id=".urlencode($postLid);
-		error_log($data);
 		if($this->isLoggedIn()) {
 			return $this->post($this->scitServer."api/1/post", $data);
 		} else {
 			throw new Exception("You have to be connected to thank a post");
+		}
+	}
+	
+	public function search($query, $type="post", $count=20, $page=0, $lang="en", $topicId=null) {
+		$data = "query=".urlencode($query)."&type=".urlencode($type)."&count=".urlencode($count)."&page=".urlencode($page)."&lang=".urlencode($lang)."&topicId=".urlencode($topicId);
+		if($this->isLoggedIn()) {
+			return $this->get($this->scitServer."api/1/search?".$data);
+		} else {
+			throw new Exception("You have to be connected to perform a search.");
 		}
 	}
 	
