@@ -10,7 +10,8 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 		//die($url);
 		$curlHandler = curl_init();
 		curl_setopt($curlHandler, CURLOPT_URL, $url);
-		curl_setopt($curlHandler,CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($curlHandler, CURLOPT_ENCODING , "gzip");
 		try {
 			$body = curl_exec($curlHandler);
 			$status = curl_getinfo($curlHandler,CURLINFO_HTTP_CODE);
@@ -27,8 +28,9 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 
 	public function executeHttpPost($url,$postData){
 		$curlHandler = curl_init();
+		curl_setopt($curlHandler, CURLOPT_ENCODING , "gzip");
 		curl_setopt($curlHandler, CURLOPT_URL, $url);
-		curl_setopt($curlHandler,CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER,true);
 		// THE CRAPIEST THING I'VE EVER SEEN :
 		$putData = tmpfile();
 		fwrite($putData, $putString);

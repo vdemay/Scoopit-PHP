@@ -91,11 +91,11 @@ class ScoopIt {
 		} 
 	}
 	
-	private function get($url){
+	public function get($url){
 		return $this->executor->execute($url);
 	}
 	 
-	private function post($url,$postData){
+	public function post($url,$postData){
 		return $this->executor->executePost($url,$postData);
 	}
 	
