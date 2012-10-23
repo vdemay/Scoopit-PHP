@@ -9,7 +9,10 @@
    // Construct scoop var, which handle API communication
    $scoop = new ScoopIt(new SessionTokenStore(), $localUrl, $consumerKey, $consumerSecret);
    
-   // Login
+   // Login in, if not previously logged in, it will issue a redirection
+   // to scoop.it servers to log the user in. 
+   // You can omit the call below if you want to use the api in "anonymous"
+   // mode.
    $scoop->login();
 ?>
 <html>
@@ -22,7 +25,8 @@
 		echo "<h1>Hello ".$currentUser->name."</h1>";
 		
 
-		// Get information about topic with 24001 lid
+		// Get information about topic with 24001 lid (this can be also
+                // called in anonymous mode).
 		$topic = $scoop->topic(24001);
 		echo "<h2>Information about topic: <img width='32px' src='".$topic->mediumImageUrl."' /><i> ".$topic->name."</i></h2>";
 		echo "<p>Here is the print_r() output for the object \$topic:</p>";
