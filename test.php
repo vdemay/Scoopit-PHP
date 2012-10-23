@@ -1,22 +1,21 @@
+<?php
+   // Start the session
+   session_start();
+   
+   // Include needed files
+   include_once("ScoopIt.php");
+   include_once("config.php");
+   
+   // Construct scoop var, which handle API communication
+   $scoop = new ScoopIt(new SessionTokenStore(), $localUrl, $consumerKey, $consumerSecret);
+   
+   // Login
+   $scoop->login();
+?>
 <html>
 	<title>Scoop.it API Test</title>
 <body>
 	<?php
-		// Start the session
-		session_start();
-		
-		// Include needed files
-		include_once("ScoopIt.php");
-		include_once("config.php");
-		
-		// Construct scoop var, which handle API communication
-		$scoop = new ScoopIt(new SessionTokenStore(), $localUrl, $consumerKey, $consumerSecret);
-		
-		//$scoop->logout();
-		//print_r($scoop->profile(0));
-		
-		// Login
-		$scoop->login();
 		// Get the current user
 		$currentUser = $scoop->profile(null)->user;
 		// Display the current user name
