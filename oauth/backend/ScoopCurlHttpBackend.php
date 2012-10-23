@@ -12,6 +12,7 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 		curl_setopt($curlHandler, CURLOPT_URL, $url);
 		curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER,1);
 		curl_setopt($curlHandler, CURLOPT_ENCODING , "gzip");
+		curl_setopt($curlHandler, CURLOPT_CAPATH , "startssl.pem");
 		try {
 			$body = curl_exec($curlHandler);
 			$status = curl_getinfo($curlHandler,CURLINFO_HTTP_CODE);
@@ -31,6 +32,7 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 		curl_setopt($curlHandler, CURLOPT_ENCODING , "gzip");
 		curl_setopt($curlHandler, CURLOPT_URL, $url);
 		curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($curlHandler, CURLOPT_CAPATH , "startssl.pem");
 		// THE CRAPIEST THING I'VE EVER SEEN :
 		$putData = tmpfile();
 		fwrite($putData, $putString);
