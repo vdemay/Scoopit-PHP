@@ -80,15 +80,7 @@ class ScoopIt {
 			$this->httpBackend = $httpBackend;
 		}
 		
-		//anonymous
-		$accessToken=$this->tokenStore->getAccessToken();
-		if($accessToken==null){
-			$this->executor = new ScoopExecutor($this->consumer,null,$this->httpBackend);
-		} else if ($this->isLoggedIn()) {
-			$secret = $this->tokenStore->getSecret();
-			$token = new OauthConsumer($accessToken,$secret);
-			$this->executor = new ScoopExecutor($this->consumer, $token, $this->httpBackend);
-		} 
+		$this->executor = new ScoopExecutor($this->consumer, $this->tokenStore, $this->httpBackend);
 	}
 	
 	public function get($url){
@@ -179,10 +171,6 @@ class ScoopIt {
 				exit;
 			}
 		}
-	
-		// We are authenticated, construct the executor
-		$token = new OauthConsumer($accessToken,$secret);
-		$this->executor = new ScoopExecutor($this->consumer, $token, $this->httpBackend);
 	}
 	
 	public function logout(){
