@@ -36,7 +36,7 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 		curl_setopt($curlHandler, CURLOPT_ENCODING , "gzip");
 		curl_setopt($curlHandler, CURLOPT_URL, $url);
 		curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER,true);
-		curl_setopt($curlHandler, CURLOPT_CAPATH , "startssl.pem");
+		curl_setopt($curlHandler, CURLOPT_CAINFO , realpath(dirname(__FILE__))."/startssl.pem");
 		// THE CRAPIEST THING I'VE EVER SEEN :
 		$putData = tmpfile();
 		fwrite($putData, $putString);
@@ -44,6 +44,9 @@ class ScoopCurlHttpBackend implements ScoopHttpBackend {
 		curl_setopt($curlHandler, CURLOPT_POSTFIELDS, $postData);
 		try {
 			$body = curl_exec($curlHandler);
+			if($body==false){
+			  throw new Exception("Unable to curl ".$url." reason: ".curl_error($curlHandler));
+                        }
 			$status = curl_getinfo($curlHandler,CURLINFO_HTTP_CODE);
 			if($status!=200){
 				throw new ScoopHttpNot200Exception($url,$body,$status);
