@@ -255,13 +255,22 @@ class ScoopIt {
 		}
 	}
 	
-	public function thankAPost($postLid) {
-		$data = "action=thank&id=".urlencode($postLid);
+	public function thankAPost($postId) {
+		$data = "action=thank&id=".urlencode($postId);
 		if($this->isLoggedIn()) {
 			return $this->post($this->scitServer."api/1/post", $data);
 		} else {
 			throw new Exception("You have to be connected to thank a post");
 		}
+	}
+
+	public function commentAPost($postId, $commentText) {
+	  $data = "action=comment&id=".urlencode($postId)."&commentText="+urlencode($commentText);
+	  if($this->isLoggedIn()) {
+	    return $this->post($this->scitServer."api/1/post", $data);
+	  } else {
+	    throw new Exception("You have to be connected to thank a post");
+	  }
 	}
 	
 	public function search($query, $type="post", $count=20, $page=0, $lang="en", $topicId=null) {
