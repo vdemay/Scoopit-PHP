@@ -265,7 +265,7 @@ class ScoopIt {
 	}
 
 	public function commentAPost($postId, $commentText) {
-	  $data = "action=comment&id=".urlencode($postId)."&commentText="+urlencode($commentText);
+	  $data = "action=comment&id=".urlencode($postId)."&commentText=".urlencode($commentText);
 	  if($this->isLoggedIn()) {
 	    return $this->post($this->scitServer."api/1/post", $data);
 	  } else {
