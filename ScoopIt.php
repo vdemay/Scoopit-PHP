@@ -1,140 +1,9 @@
 <?php
 
 include("oauth/OAuth.php");
-include("oauth/SessionTokenStore.php");
-
-
-
-#################################################################################
-## SCCOP.IT BACKEND : REQUESTER
-#################################################################################
-
-// Used to provide custom http code if you hate default curl code :P
-interface ScoopHttpBackend{
-	public function executeHttpGet($url);
-	public function executeHttpPost($url,$putString);
-}
-// Default curl implementation this is some crap.
-class ScoopCurlHttpBackend implements ScoopHttpBackend {
-	// The folowing code uses curl as http backend.
-	// Note that this is really crappy, pecl_http really has a better interface.
-	public function executeHttpGet($url){
-		//die($url);
-		$curlHandler = curl_init();
-		curl_setopt($curlHandler, CURLOPT_URL, $url);
-		curl_setopt($curlHandler,CURLOPT_RETURNTRANSFER,1);
-		try {
-			$body = curl_exec($curlHandler);
-			$status = curl_getinfo($curlHandler,CURLINFO_HTTP_CODE);
-			if($status!=200){
-				throw new ScoopHttpNot200Exception($url,$body,$status);
-			}
-			curl_close($curlHandler);
-			return $body;
-		}catch(Exception $e){
-			curl_close($curlHandler);
-			throw $e;
-		}
-	}
-
-	public function executeHttpPost($url,$postData){
-		$curlHandler = curl_init();
-		curl_setopt($curlHandler, CURLOPT_URL, $url);
-		curl_setopt($curlHandler,CURLOPT_RETURNTRANSFER,true);
-		// THE CRAPIEST THING I'VE EVER SEEN :
-		$putData = tmpfile();
-		fwrite($putData, $putString);
-		fseek($putData, 0);
-		curl_setopt($curlHandler, CURLOPT_POSTFIELDS, $postData);
-		try {
-			$body = curl_exec($curlHandler);
-			$status = curl_getinfo($curlHandler,CURLINFO_HTTP_CODE);
-			if($status!=200){
-				throw new ScoopHttpNot200Exception($url,$body,$status);
-			}
-			curl_close($curlHandler);
-			return $body;
-		}catch(Exception $e){
-			curl_close($curlHandler);
-			throw $e;
-		}
-	}
-}
-
-#################################################################################
-## EXECUTOR
-#################################################################################
-// Execute request to Scoop. Requests are oauth authenticated
-class ScoopExecutor {
-	private $consumerToken;
-	private $accessToken;
-	private $signatureMethod;
-	private $httpBackend;
-	function __construct($consumerToken,$accessToken,$httpBackend){
-		$this->consumerToken = $consumerToken;
-		$this->accessToken = $accessToken;
-		$this->signatureMethod =  new OAuthSignatureMethod_HMAC_SHA1();
-		$this->httpBackend = $httpBackend;
-	}
-	
-	// url must not contain any parameters
-	function execute($url){
-		$parsed = parse_url($url);
-		$params = array();
-		parse_str($parsed['query'], $params);
-		$req = OAuthRequest::from_consumer_and_token($this->consumerToken, $this->accessToken, "GET", $url, $params);
-		$req->sign_request($this->signatureMethod,$this->consumerToken, $this->accessToken);
-		try {
-			//die($req->to_url());
-			$responseBody = $this->httpBackend->executeHttpGet($req->to_url());
-			return json_decode($responseBody);
-		} catch(ScoopHttpNot200Exception $e) {
-			throw new ScoopAuthenticationException("Unable to execute opensocial query, server response : ".$e->toString());
-		}
-	}
-
-	function executeDelete($url, $params=array()){
-		$req = OAuthRequest::from_consumer_and_token($this->consumerToken, $this->accessToken, "DELETE", $url, $params);
-		$req->sign_request($this->signatureMethod,$this->consumerToken, $this->accessToken);
-		try {
-			$responseBody = $this->httpBackend->executeHttpDelete($req->to_url());
-			return json_decode($responseBody);
-		} catch(ScoopHttpNot200Exception $e) {
-			throw new ScoopAuthenticationException("Unable to execute opensocial query, server response : ".$e->toString());
-		}
-	}
-	
-	function executePost($url,$postData){
-		if($postData==null || $postData==""){
-			throw new Exception("Null data");
-		}
-		$req = OAuthRequest::from_consumer_and_token($this->consumerToken, $this->accessToken, "POST", $url, array());
-		$req->sign_request($this->signatureMethod,$this->consumerToken, $this->accessToken);
-
-		try {
-			$responseBody = $this->httpBackend->executeHttpPost($req->to_url(), $postData);
-			return json_decode($responseBody);
-		} catch(ScoopHttpNot200Exception $e) {
-			throw new ScoopAuthenticationException("Unable to execute opensocial query, server response : ".$e->toString());
-		}
-	}
-	
-	function executePut($url,$putData){
-		if($putData==null || $putData==""){
-			throw new Exception("Null data");
-		}
-		$req = OAuthRequest::from_consumer_and_token($this->consumerToken, $this->accessToken, "PUT", $url, array());
-		$req->sign_request($this->signatureMethod,$this->consumerToken, $this->accessToken);
-
-		try {
-			$responseBody = $this->httpBackend->executeHttpPut($req->to_url(), $putData);
-			return json_decode($responseBody);
-		} catch(ScoopHttpNot200Exception $e) {
-			throw new ScoopAuthenticationException("Unable to execute opensocial query, server response : ".$e->toString());
-		}
-	}
-}
-#################################################################################
+include("oauth/tokenStore/SessionTokenStore.php");
+include("oauth/backend/ScoopCurlHttpBackend.php");
+include("oauth/executor/ScoopExecutor.php");
 
 // You may want to catch this to present a decent =  error message for you're
 // user ;)
@@ -144,6 +13,7 @@ class ScoopAuthenticationException extends Exception {
 	public function __construct($message){
 		parent::__construct($message);
 	}
+	
 }
 
 class ScoopHttpNot200Exception extends Exception {
@@ -166,7 +36,6 @@ class ScoopHttpNot200Exception extends Exception {
 #################################################################################
 
 class ScoopIt {
-	
 	private $scitServer="http://www.scoop.it/";
 	private $scitRequestTokenUrl;
 	private $scitAccessTokenUrl;
@@ -189,10 +58,14 @@ class ScoopIt {
 	//                by default it will be an instance of ScoopCurlHttpBackend, and if you do
 	//                not have cUrl, you can use pecl_http, just provide an instance of
 	//                ScoopPeclHttpBackend...
-	//
+	// $scoopitServerUrl : the scoopit server url. By default use the field $scitServer of this class
 	// This method construct the Scoop object and authenticate the current user
 	// This can do external redirection so, be sure to fill myUrl apprioriately
-	public function __construct($tokenStore, $myUrl, $consumerKey, $consumerSecret, $httpBackend = null){
+	public function __construct($tokenStore, $myUrl, $consumerKey, $consumerSecret, $httpBackend = null, $scoopitServerUrl = null) {
+		if ($scoopitServerUrl != null) {
+			$this->scitServer = $scoopitServerUrl;
+		}
+		
 		$this->scitRequestTokenUrl=$this->scitServer."oauth/request";
 		$this->scitAccessTokenUrl=$this->scitServer."oauth/access";
 		$this->scitAuthorizeUrl=$this->scitServer."oauth/authorize";
@@ -207,22 +80,14 @@ class ScoopIt {
 			$this->httpBackend = $httpBackend;
 		}
 		
-		//anonymous
-		$accessToken=$this->tokenStore->getAccessToken();
-		if($accessToken==null){
-			$this->executor = new ScoopExecutor($this->consumer,null,$this->httpBackend);
-		} else if ($this->isLoggedIn()) {
-			$secret = $this->tokenStore->getSecret();
-			$token = new OauthConsumer($accessToken,$secret);
-			$this->executor = new ScoopExecutor($this->consumer, $token, $this->httpBackend);
-		} 
+		$this->executor = new ScoopExecutor($this->consumer, $this->tokenStore, $this->httpBackend);
 	}
 	
-	private function get($url){
+	public function get($url){
 		return $this->executor->execute($url);
 	}
 	 
-	private function post($url,$postData){
+	public function post($url,$postData){
 		return $this->executor->executePost($url,$postData);
 	}
 	
@@ -306,10 +171,6 @@ class ScoopIt {
 				exit;
 			}
 		}
-	
-		// We are authenticated, construct the executor
-		$token = new OauthConsumer($accessToken,$secret);
-		$this->executor = new ScoopExecutor($this->consumer, $token, $this->httpBackend);
 	}
 	
 	public function logout(){
@@ -320,6 +181,15 @@ class ScoopIt {
 	
 	public function resolve($type, $shortName) {
 		return $this->get($this->scitServer."api/1/resolver?type=".$type."&shortName=".$shortName);
+	}
+	
+	public function resolveTopicFromItsShortName($short_name) {
+		$response = $this->resolve("Topic", $short_name);
+		if ($response->id != null) {
+			return $this->topic($response->id);
+		}
+		// Could not find any topic with this short_name
+		return null;
 	}
 	
 	public function test() {
@@ -341,12 +211,26 @@ class ScoopIt {
 		}
 	}
 	
-	public function topic($id, $curated=30, $curable=0, $page=0) {
-		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page)->topic;
+	public function aPost($id, $ncomments=0) {
+		$thePost = $this->get($this->scitServer."api/1/post?id=".$id."&ncomments=".$ncomments);
+		return $thePost;
 	}
 	
-	public function compilation($sort="rss", $since=0, $count=30) {
-		return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
+	public function topic($id, $curated=30, $curable=0, $page=0, $since = -1) {
+		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
+	}
+	
+	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0, $page=0) {
+		if($this->isLoggedIn()) {
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments."&page=".$page)->posts;
+		} else {
+			throw new Exception("You need to be connected to get your compilation of followed topics");
+		}
+	}
+	
+	public function rescoop($post_id, $topic_id) {
+		$postData = "action=rescoop&id=".$post_id."&destTopicId=".$topic_id;
+		return $this->post($this->scitServer."api/1/post", $postData);
 	}
 	
 	public function share($post_id, $sharer, $text) {
@@ -357,6 +241,58 @@ class ScoopIt {
 			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId.", \"text\": ".$text."}]";	
 			return $this->post($this->scitServer."api/1/post", $postData);
 		}
+	}
+	
+	public function notifications($since) {
+		if($this->isLoggedIn()) {
+			return $this->get($this->scitServer."api/1/notifications?since=".$since)->notifications;
+		} else {
+			throw new Exception("You have to be connected to get your notifications");
+		}
+	}
+	
+	public function createAPost($title, $url, $content, $imageUrl, $topicId) {
+		$data = "action=create&title=".urlencode($title)."&url=".urlencode($url)."&content=".urlencode($content)."&imageUrl=".urlencode($imageUrl)."&topicId=".$topicId;
+		if($this->isLoggedIn()) {
+			return $this->post($this->scitServer."api/1/post", $data);
+		} else {
+			throw new Exception("You have to be connected to create a post");
+		}
+	}
+	
+	public function thankAPost($postId) {
+		$data = "action=thank&id=".urlencode($postId);
+		if($this->isLoggedIn()) {
+			return $this->post($this->scitServer."api/1/post", $data);
+		} else {
+			throw new Exception("You have to be connected to thank a post");
+		}
+	}
+
+	public function commentAPost($postId, $commentText) {
+	  $data = "action=comment&id=".urlencode($postId)."&commentText=".urlencode($commentText);
+	  if($this->isLoggedIn()) {
+	    return $this->post($this->scitServer."api/1/post", $data);
+	  } else {
+	    throw new Exception("You have to be connected to thank a post");
+	  }
+	}
+	
+	public function search($query, $type="post", $count=20, $page=0, $lang="en", $topicId=null) {
+		$data = "query=".urlencode($query)."&type=".urlencode($type)."&count=".urlencode($count)."&page=".urlencode($page)."&lang=".urlencode($lang)."&topicId=".urlencode($topicId);
+		if($this->isLoggedIn()) {
+			return $this->get($this->scitServer."api/1/search?".$data);
+		} else {
+			throw new Exception("You have to be connected to perform a search.");
+		}
+	}
+	
+	/**
+	 * Send a request builded by the user
+	 * @param String $url
+	 */
+	public function getCustomRequest($url) {
+		return $this->get($this->scitServer."api/1/".$url);
 	}
 }
 
