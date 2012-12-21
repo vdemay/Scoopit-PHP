@@ -349,9 +349,14 @@ class ScoopIt {
 		return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count)->posts;
 	}
 	
-	public function share($post_id, $sharer) {
-		$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";
-		return $this->post($this->scitServer."api/1/post", $postData);
+	public function share($post_id, $sharer, $text) {
+		if (is_empty($text)) {
+			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";	
+			return $this->post($this->scitServer."api/1/post", $postData);
+		} else {
+			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId.", \"text\": ".$text."}]";	
+			return $this->post($this->scitServer."api/1/post", $postData);
+		}
 	}
 }
 
