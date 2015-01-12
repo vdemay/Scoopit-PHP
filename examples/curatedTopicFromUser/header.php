@@ -10,10 +10,8 @@ session_start();
 //TODO -------------------------------------------------------------------
 //TODO -------------------------------------------------------------------
 //TODO -------------------------------------------------------------------
-//$consumerKey = "YOUR_KEY";
-//$consumerSecret = "YOUR_SECRET";
-$consumerKey = "homautomat|Ygj1wV16HP-8zvYfAyNOuNwcinW-4KZTHeGS7hTo_7M";
-$consumerSecret = "q4gEbcFvEADmyRo6P4HcguWwypTAL142hlFeIZlBiZYBQUUhyh";
+$consumerKey = "YOUR_KEY";
+$consumerSecret = "YOUR_SECRET";
 
 
 ?>
