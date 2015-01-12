@@ -185,12 +185,22 @@ class ScoopIt {
 	
 	public function resolveTopicFromItsShortName($short_name) {
 		$response = $this->resolve("Topic", $short_name);
-		if ($response->id != null) {
+		if (isset($response->id)) {
 			return $this->topic($response->id);
 		}
 		// Could not find any topic with this short_name
 		return null;
 	}
+	
+	public function resolveUserFromItsShortName($short_name) {
+		$response = $this->resolve("User", $short_name);
+		if (isset($response->id)) {
+			return $this->profile($response->id);
+		}
+		// Could not find any user with this short_name
+		return null;
+	}
+	
 	
 	public function test() {
 		return $this->get($this->scitServer."api/1/test");
@@ -207,7 +217,7 @@ class ScoopIt {
 		} else if (!is_null($id)) {
 			return $this->get($this->scitServer."api/1/profile?id=".$id."&getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".$curable."&curated=".$curated);
 		} else {
-			throw new Exception("Profile without is not permitted in anonymous mode");
+			throw new Exception("Profile request without id not permitted in anonymous mode");
 		}
 	}
 	
