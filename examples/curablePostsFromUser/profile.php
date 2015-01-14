@@ -23,7 +23,7 @@
 	<ul>
 		<?php
 			foreach ($profile->user->curatedTopics as $topic) {
-				echo "<li>$topic->name (<a href='topicPostsToCurate.php?id=$topic->id'>posts to curate</a>)</li>";
+				echo "<li>$topic->name (<a href='postsToCurate.php?id=$topic->id'>posts to curate</a>)</li>";
 			}
 		?>
 	</ul>
