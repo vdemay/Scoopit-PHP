@@ -12,5 +12,13 @@ session_start();
 $consumerKey = "YOUR_KEY";
 $consumerSecret = "YOUR_SECRET";
 
-
 ?>
+<html>
+	<head>
+		<title>Exemples List and Get categories</title>
+	</head>
+	<body>
+		<p>
+			<i>This sample shows how to list and get content from categories</i>
+		</p>
+		<hr/>
