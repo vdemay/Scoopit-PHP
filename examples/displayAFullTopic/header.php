@@ -1,7 +1,7 @@
 <?php 
 // Start the session
 session_start();
-include_once 'config.php';
+include_once 'settings.php';
 ?>
 <html>
 	<head>
