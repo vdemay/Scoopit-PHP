@@ -1,0 +1,87 @@
+/** ----------- LITTLE BOX -------- */
+#scit_viewbox .littleBoxContainer {
+	position: absolute;
+	display: none;
+	background-image: url("http://www.scoop.it/resources/img/littlebox/arrowtop.png");
+	background-repeat: no-repeat;
+	background-position: 10px 0px;
+	padding-top: 11px;
+	z-index: 200;
+	left: 0;
+	color: #E0E0E0;
+	cursor: default;
+}
+
+#scit_viewbox .littleBoxContainer .copyLinkWrapper {
+	position: relative;
+}
+
+#scit_viewbox .littleBoxContainer .copyLinkWrapper div {
+	width: 88px;
+}
+
+#scit_viewbox .littleBoxContainer .copyLinkWrapper .copylink {
+	cursor: pointer;
+}
+
+#scit_viewbox .littleBoxContainer .copyLinkWrapper .copylink:hover {
+	text-decoration: underline;
+}
+
+#scit_viewbox .copyLinkWrapper .linkcopied {
+	display: none;
+	cursor: default;
+}
+
+#scit_viewbox .littleBoxContent {
+	background-image: url("http://www.scoop.it/resources/img/littlebox/bg_black.png");
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	z-index: 200;
+	font-size: 14px;
+	padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#scit_viewbox .littleBoxContent * {
+	text-align: left;
+	font-weight: normal;
+}
+
+#scit_viewbox .littleBoxContent tr td {
+	padding-left: 5px;
+	padding-right: 5px;
+	line-height: 20px;
+}
+
+#scit_viewbox .littleBoxContent tr.title {
+	font-style: italic;
+	color: #E0E0E0;
+}
+
+#scit_viewbox .littleBoxContent td .left {
+	text-align: left;
+}
+
+#scit_viewbox .littleBoxContent td .right {
+	text-align: right;
+}
+
+#scit_viewbox .littleBoxContent tr.even {
+	background-color: #3C3C3C;
+}
+
+#scit_viewbox .littleBoxContent tr.odd {
+	background-color: #4C4C4C;
+}
+
+#scit_viewbox .littleBoxContent tr.clickable {
+	cursor: pointer;
+}
+
+#scit_viewbox .littleBoxContent tr.clickable:HOVER {
+	color: white;
+	background-color: #90D302;
+}

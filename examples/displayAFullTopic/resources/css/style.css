@@ -1,0 +1,204 @@
+@CHARSET "UTF-8";
+
+#scit_viewbox a {
+	color: #BF254E;
+	text-decoration: none;
+}
+#scit_viewbox a:HOVER {
+	text-decoration: none;
+}
+
+#scit_viewbox blockquote {
+    background-image: url("../img/blockquote.png");
+    background-position: 0 -1px;
+    background-repeat: no-repeat;
+    padding-bottom: 7px;
+    padding-left: 27px;
+    padding-top: 2px;
+}
+
+#scit_viewbox {
+	width: 970px;
+	margin: auto;
+	position: relative;
+}
+
+#scit_viewbox .onePost {
+    padding-bottom: 10px;
+    width: 457px;
+}
+
+#scit_viewbox .onePost .postView {
+    background-color: #FFFFFF;
+    clear: both;
+    color: black;
+    padding-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    position: relative;
+    width: 457px;
+}
+
+/* The popup for a post*/
+#scit_viewbox  #thePostToPrint {
+    box-shadow: 0 0 10px #000000;
+    left: 240px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    position: absolute;
+    top: 115px;
+    width: 467px;
+    z-index: 3;
+}
+
+#scit_viewbox #thePostToPrint #closeThePostToPrint {
+    cursor: pointer;
+    position: absolute;
+    right: -15px;
+    top: -15px;
+}
+#scit_viewbox #thePostToPrint .onePost {
+	padding-bottom:0px;
+}
+
+/* STYLE FOR METAS */
+#scit_viewbox .onePost .postView .metas {
+	color: #777777;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+}
+#scit_viewbox .onePost .postView .metas .sourceicon {
+    float: left;
+    margin-right: 5px;
+}
+
+#scit_viewbox .onePost .postView div.title {
+    color: black;
+    font-family: Arial,Helvetica,sans-serif;
+    color: #BF254E;
+    font-size: 22px;
+    font-size-adjust: 0.49;
+    font-weight: normal;
+    height: auto;
+    margin-bottom: 5px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    text-align: left;
+    word-wrap: break-word;
+}
+#scit_viewbox .onePost .postView div.title h2 {
+	margin-top:5px;
+	margin-bottom:5px;
+}
+#scit_viewbox .onePost .postView div.title a {
+	color: #BF254E;
+	text-decoration: none;
+    font-size: 22px;
+}
+#scit_viewbox .onePost .postView div.title a:HOVER {
+	color: #BF254E;
+	text-decoration: underline;
+    font-size: 22px;
+}
+#scit_viewbox .onePost .postView .description {
+    color: #000000;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    line-height: 17px;
+    text-align: left;
+    word-wrap: break-word;
+}
+#scit_viewbox .onePost .postView .description p {
+	margin-bottom:0px;
+	padding-bottom: 10px;
+}
+
+/* STYLE FOR IMAGE */
+#scit_viewbox .onePost .postView .image img {
+    height: auto;
+    max-height: 455px;
+    max-width: 455px;
+    width: auto;
+}
+/* position */
+#scit_viewbox .onePost .postView.right .image {
+    float: right;
+    padding-left: 10px;
+}
+#scit_viewbox .onePost .postView.left .image {
+    float: left;
+    padding-right : 10px;
+}
+#scit_viewbox .onePost .postView.center .image {
+    clear: both;
+    display: block;
+    float: none;
+    margin-right: 0;
+    text-align: center;
+}
+/* size */
+#scit_viewbox .onePost .postView.small .image img {
+    max-height: none;
+    width: 112px;
+}
+#scit_viewbox .onePost .postView.medium .image img {
+    max-height: none;
+    width: 224px;
+}
+
+/* VIEW FOR BOTTOM */
+#scit_viewbox .onePost .actionsBar {
+    background-color:#DAE4EE;
+    height: 32px;
+    table-layout: fixed;
+    width: 467px;
+}
+#scit_viewbox .onePost .actionsBar td {
+    padding-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 0;
+}
+#scit_viewbox .onePost .actionsBar td.rightSide .rightItem {
+    cursor: pointer;
+    float: right;
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+#scit_viewbox .onePost .actionsBar {
+	color: #777777;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+}
+
+#scit_viewbox .paginator .page span, #scit_viewbox .paginator .page a{
+	width: 20px;
+	height: 20px;
+	display:block;
+	background-color: #DAE4EE;
+	margin: 2px;
+	text-align: center;
+}
+
+#scit_viewbox .paginator .previous img {
+	padding-right: 10px;
+}
+
+#scit_viewbox .paginator .next img {
+	padding-left: 10px;
+}
+
+
+#scit_viewbox .scoopitPowered {
+	background-color: #DAE4EE;
+	margin: auto;
+	width: 970px;
+	margin-top:20px;
+	
+}
