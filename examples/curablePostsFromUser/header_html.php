@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Exemples Show curated posts</title>
+		<title>Examples Show curated posts</title>
 	</head>
 	<body>
 		<p>

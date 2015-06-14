@@ -139,7 +139,7 @@ class ScoopIt {
 			}
 			if($accessToken==null){
 				 
-				// no access nor request token, requets a request token and
+				// no access nor request token, request a request token and
 				// authorize this application to access to gj data.
 				$parsed = parse_url($this->scitRequestTokenUrl);
 				$params = array();
@@ -163,7 +163,7 @@ class ScoopIt {
 				// store token and secret in the session for future use
 				$this->tokenStore->storeSecret($resultParams['oauth_token_secret']);
 				$this->tokenStore->storeRequestToken($requestToken);
-				// redirect to the authroization url of scoop :
+				// redirect to the authorization url of scoop :
 				// the user will then be asked to log in (in scoop) if needed
 				// and it will have to accept that our application will
 				// access to it's personal data.
