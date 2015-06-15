@@ -16,7 +16,7 @@ $consumerSecret = "YOUR_SECRET";
 ?>
 <html>
 	<head>
-		<title>Exemples TopicsFromUser</title>
+		<title>Examples TopicsFromUser</title>
 	</head>
 	<body>
 		<p>

@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 
-A sample showing how to retreive all topics of a given user.
-Then topics are displayed with pagination and each post can be displayed - original url displyaed in a iframe
+A sample showing how to retrieve all topics of a given user.
+Then topics are displayed with pagination and each post can be displayed - original url displayed in an iframe
 
 --------------------------------------------------------------------------------
 
