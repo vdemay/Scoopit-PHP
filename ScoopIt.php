@@ -13,7 +13,7 @@ class ScoopAuthenticationException extends Exception {
 	public function __construct($message){
 		parent::__construct($message);
 	}
-	
+
 }
 
 class ScoopHttpNot200Exception extends Exception {
@@ -36,19 +36,19 @@ class ScoopHttpNot200Exception extends Exception {
 #################################################################################
 
 class ScoopIt {
-	private $scitServer="http://www.scoop.it/";
+	private $scitServer="https://www.scoop.it/";
 	private $scitRequestTokenUrl;
 	private $scitAccessTokenUrl;
 	private $scitAuthorizeUrl ;
 	private $signatureMethod ;
-	
+
 	private $myUrl;
 	public  $tokenStore;
 	private $consumer;
-	
+
 	private $executor;
 	private $httpBackend;
-	
+
 	// $tokenStore : the TokenStore to be used to store authentication tokens
 	// $myUrl : the url that calls this script (used to make external
 	//          redirection of the OAuth Core 1.0 protocol)
@@ -65,7 +65,7 @@ class ScoopIt {
 		if ($scoopitServerUrl != null) {
 			$this->scitServer = $scoopitServerUrl;
 		}
-		
+
 		$this->scitRequestTokenUrl=$this->scitServer."oauth/request";
 		$this->scitAccessTokenUrl=$this->scitServer."oauth/access";
 		$this->scitAuthorizeUrl=$this->scitServer."oauth/authorize";
@@ -73,35 +73,35 @@ class ScoopIt {
 		$this->tokenStore = $tokenStore;
 		$this->myUrl = $myUrl;
 		$this->consumer=new OAuthConsumer($consumerKey,$consumerSecret,NULL);
-		
+
 		if($httpBackend == null){
 			$this->httpBackend = new ScoopCurlHttpBackend();
 		} else {
 			$this->httpBackend = $httpBackend;
 		}
-		
+
 		$this->executor = new ScoopExecutor($this->consumer, $this->tokenStore, $this->httpBackend);
 	}
-	
+
 	public function get($url){
 		return $this->executor->execute($url);
 	}
-	 
+
 	public function post($url,$postData){
 		return $this->executor->executePost($url,$postData);
 	}
-	
-	
-	
+
+
+
 	////////////////////// PUBLIC ////////////////////////////
-	
+
 	// Main authentication job is done here !
 	public function login(){
 		$accessToken = $this->tokenStore->getAccessToken();
 		// Note that in this code the secret can be the one of the request token
 		// or the access token
 		$secret = $this->tokenStore->getSecret();
-		 
+
 		if($accessToken == null) {
 			// we store the previously requested request token in the session...
 			$requestToken = $this->tokenStore->getRequestToken();
@@ -117,7 +117,7 @@ class ScoopIt {
 					parse_str($parsed['query'], $params);
 				}
 				$params['oauth_verifier'] = $_GET['oauth_verifier'];
-	
+
 				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, $token, "GET", $this->scitAccessTokenUrl, $params);
 				$acc_req->sign_request($this->signatureMethod, $this->consumer, $token);
 				//                die($acc_req->to_url());
@@ -129,7 +129,7 @@ class ScoopIt {
 				} catch(ScoopHttpNot200Exception $e) {
 					// Do nothing : this will flush the request token and request a new request token
 				}
-	
+
 				$accessToken=$resultParams['oauth_token'];
 				$secret= $resultParams['oauth_token_secret'];
 				// store token and secret in the session for future use
@@ -138,7 +138,7 @@ class ScoopIt {
 				$this->tokenStore->flushRequestToken();
 			}
 			if($accessToken==null){
-				 
+
 				// no access nor request token, request a request token and
 				// authorize this application to access to gj data.
 				$parsed = parse_url($this->scitRequestTokenUrl);
@@ -146,10 +146,10 @@ class ScoopIt {
 				if (isset($parsed['query'])) {
 					parse_str($parsed['query'], $params);
 				}
-				 
+
 				$acc_req = OAuthRequest::from_consumer_and_token($this->consumer, NULL, "GET", $this->scitRequestTokenUrl, $params);
 				$acc_req->sign_request($this->signatureMethod, $this->consumer, NULL);
-	
+
 				// Execute the HTTP request & parse result as a tokens TODO FACTORIZE
 				$resultParams = array();
 				try {
@@ -172,17 +172,17 @@ class ScoopIt {
 			}
 		}
 	}
-	
+
 	public function logout(){
 		$this->tokenStore->flushRequestToken();
 		$this->tokenStore->flushAccessToken();
 		$this->tokenStore->flushSecret();
 	}
-	
+
 	public function resolve($type, $shortName) {
 		return $this->get($this->scitServer."api/1/resolver?type=".$type."&shortName=".$shortName);
 	}
-	
+
 	public function resolveTopicFromItsShortName($short_name) {
 		$response = $this->resolve("Topic", $short_name);
 		if (isset($response->id)) {
@@ -191,7 +191,7 @@ class ScoopIt {
 		// Could not find any topic with this short_name
 		return null;
 	}
-	
+
 	public function resolveUserFromItsShortName($short_name) {
 		$response = $this->resolve("User", $short_name);
 		if (isset($response->id)) {
@@ -200,17 +200,17 @@ class ScoopIt {
 		// Could not find any user with this short_name
 		return null;
 	}
-	
-	
+
+
 	public function test() {
 		return $this->get($this->scitServer."api/1/test");
 	}
-	
+
 	public function isLoggedIn() {
 		$accessToken = $this->tokenStore->getAccessToken();
 		return $accessToken != null;
 	}
-	
+
 	public function profile($id, $getCuratedTopics = "true", $getFollowedTopics = "false", $curated = 0, $curable=0) {
 		if (is_null($id) && $this->isLoggedIn()) {
 			return $this->get($this->scitServer."api/1/profile?getCuratedTopics=".$getCuratedTopics."&getFollowedTopics=".$getFollowedTopics."&curable=".$curable."&curated=".$curated);
@@ -220,16 +220,16 @@ class ScoopIt {
 			throw new Exception("Profile request without id not permitted in anonymous mode");
 		}
 	}
-	
+
 	public function aPost($id, $ncomments=0) {
 		$thePost = $this->get($this->scitServer."api/1/post?id=".$id."&ncomments=".$ncomments);
 		return $thePost;
 	}
-	
+
 	public function topic($id, $curated=30, $curable=0, $page=0, $since = -1) {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
-	
+
 	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0, $page=0) {
 		if($this->isLoggedIn()) {
 			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments."&page=".$page)->posts;
@@ -237,22 +237,22 @@ class ScoopIt {
 			throw new Exception("You need to be connected to get your compilation of followed topics");
 		}
 	}
-	
+
 	public function rescoop($post_id, $topic_id) {
 		$postData = "action=rescoop&id=".$post_id."&destTopicId=".$topic_id;
 		return $this->post($this->scitServer."api/1/post", $postData);
 	}
-	
+
 	public function share($post_id, $sharer, $text) {
 		if (is_empty($text)) {
-			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";	
+			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId."}]";
 			return $this->post($this->scitServer."api/1/post", $postData);
 		} else {
-			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId.", \"text\": ".$text."}]";	
+			$postData = "action=share&id=".$post_id."&shareOn=[{\"sharerId\": \"".$sharer->sharerId."\", \"cnxId\": ".$sharer->cnxId.", \"text\": ".$text."}]";
 			return $this->post($this->scitServer."api/1/post", $postData);
 		}
 	}
-	
+
 	public function notifications($since) {
 		if($this->isLoggedIn()) {
 			return $this->get($this->scitServer."api/1/notifications?since=".$since)->notifications;
@@ -260,7 +260,7 @@ class ScoopIt {
 			throw new Exception("You have to be connected to get your notifications");
 		}
 	}
-	
+
 	public function createAPost($title, $url, $content, $imageUrl, $topicId) {
 		$data = "action=create&title=".urlencode($title)."&url=".urlencode($url)."&content=".urlencode($content)."&imageUrl=".urlencode($imageUrl)."&topicId=".$topicId;
 		if($this->isLoggedIn()) {
@@ -269,7 +269,7 @@ class ScoopIt {
 			throw new Exception("You have to be connected to create a post");
 		}
 	}
-	
+
 	public function thankAPost($postId) {
 		$data = "action=thank&id=".urlencode($postId);
 		if($this->isLoggedIn()) {
@@ -287,7 +287,7 @@ class ScoopIt {
 	    throw new Exception("You have to be connected to thank a post");
 	  }
 	}
-	
+
 	public function search($query, $type="post", $count=20, $page=0, $lang="en", $topicId=null) {
 		$data = "query=".urlencode($query)."&type=".urlencode($type)."&count=".urlencode($count)."&page=".urlencode($page)."&lang=".urlencode($lang)."&topicId=".urlencode($topicId);
 		if($this->isLoggedIn()) {
@@ -296,7 +296,7 @@ class ScoopIt {
 			throw new Exception("You have to be connected to perform a search.");
 		}
 	}
-	
+
 	/**
 	 * Send a request builded by the user
 	 * @param String $url

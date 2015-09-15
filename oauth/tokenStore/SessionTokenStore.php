@@ -1,6 +1,6 @@
 <?php
 
-include("TokenStore.php");
+include_once("TokenStore.php");
 
 // Store authentication tokens in the session
 class SessionTokenStore implements TokenStore{
@@ -9,7 +9,7 @@ class SessionTokenStore implements TokenStore{
 			session_start();
 		}
 	}
-	
+
 	// store
 	public function storeRequestToken($value){
 		$_SESSION['scoop.requestToken']=$value;
@@ -23,7 +23,7 @@ class SessionTokenStore implements TokenStore{
 	public function storeSecret($value){
 		$_SESSION['scoop.secret']=$value;
 	}
-	
+
 	// get
 	public function getRequestToken(){
 		return isset($_SESSION['scoop.requestToken']) ? $_SESSION['scoop.requestToken'] : null;
@@ -37,7 +37,7 @@ class SessionTokenStore implements TokenStore{
 	public function getSecret(){
 		return isset($_SESSION['scoop.secret']) ? $_SESSION['scoop.secret'] : null;
 	}
-	
+
 	// flush
 	public function flushRequestToken(){
 		unset($_SESSION['scoop.requestToken']);
