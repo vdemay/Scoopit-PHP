@@ -183,6 +183,10 @@ class ScoopIt {
 		return $this->get($this->scitServer."api/1/resolver?type=".$type."&shortName=".$shortName);
 	}
 
+	public function resolveTopicFromItsUrlName($urlName) {
+		return $this->resolveTopicFromItsShortName(urlName);
+	}
+
 	public function resolveTopicFromItsShortName($short_name) {
 		$response = $this->resolve("Topic", $short_name);
 		if (isset($response->id)) {
@@ -228,6 +232,10 @@ class ScoopIt {
 
 	public function topic($id, $curated=30, $curable=0, $page=0, $since = -1) {
 		return $this->get($this->scitServer."api/1/topic?id=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
+	}
+
+	public function topicFromUrlname($urlName, $curated=30, $curable=0, $page=0, $since = -1) {
+		return $this->get($this->scitServer."api/1/topic?urlName=".$id."&curated=".$curated."&curable=".$curable."&page=".$page."&since=".$since)->topic;
 	}
 
 	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0, $page=0) {
