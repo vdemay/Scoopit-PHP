@@ -240,7 +240,7 @@ class ScoopIt {
 
 	public function compilation($sort="rss", $since=0, $count=30, $ncomments=0, $page=0) {
 		if($this->isLoggedIn()) {
-			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments".$ncomments."&page=".$page)->posts;
+			return $this->get($this->scitServer."api/1/compilation?&sort=".$sort."&since=".$since."&count=".$count."&ncomments=".$ncomments."&page=".$page)->posts;
 		} else {
 			throw new Exception("You need to be connected to get your compilation of followed topics");
 		}
